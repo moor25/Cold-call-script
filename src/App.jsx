@@ -2,75 +2,80 @@ import { useState, useEffect } from "react";
 
 const STORAGE_KEY = "smma-live-v2";
 
+/* eslint-disable no-irregular-whitespace */
+const Q1 = "„"; // Hungarian opening quote
+const Q2 = "”"; // Hungarian closing quote
+const DASH = "–"; // en dash
+
 const DEFAULT = [
   { type: "phase", label: "NYITÁS" },
-  { type: "you", text: "„[Vezetéknév] úr/asszony, jól hívtam?"" },
+  { type: "you", text: Q1 + "[Vezetéknév] úr/asszony, jól hívtam?" + Q2 },
   { type: "wait", text: "Várd meg a választ" },
-  { type: "you", text: "„[Neved] vagyok, [cég neve]. Bevallom, ez egy hideg hívás – de pontosan 30 másodpercet kérek, és ha azt mondja, nem releváns, azonnal lerakom. Rendben?"" },
+  { type: "you", text: Q1 + "[Neved] vagyok, [cég neve]. Bevallom, ez egy hideg hívás " + DASH + " de pontosan 30 másodpercet kérek, és ha azt mondja, nem releváns, azonnal lerakom. Rendben?" + Q2 },
   { type: "phase", label: "FÁJDALOM" },
-  { type: "you", text: "„Azért keresem, mert építőipari cégekkel dolgozunk együtt, és azt látom újra és újra, hogy az érdeklődők nagy része bekér egy árajánlatot, aztkán eltűnik – vagy kiderül, hogy sem a büdzsé, sem a határidő nem volt valós. Ez önöknél is előfordul?"" },
-  { type: "wait", text: "Várd meg a választ – ők kezdjenek el beszélni" },
+  { type: "you", text: Q1 + "Azért keresem, mert építőipari cégekkel dolgozunk együtt, és azt látom újra és újra, hogy az érdeklődők nagy része bekér egy árajánlatot, aztkán eltűnik " + DASH + " vagy kiderül, hogy sem a büdzsé, sem a határidő nem volt valós. Ez önöknél is előfordul?" + Q2 },
+  { type: "wait", text: "Várd meg a választ " + DASH + " ők kezdjenek el beszélni" },
   {
     type: "ab",
     a: {
-      label: "HA IGEN – elismeri a problémát",
-      they: "„Igen, sajnos ez nálunk is gond."",
-      you: "→ Folytasd a Hitelességi résszel lentebb",
+      label: "HA IGEN " + DASH + " elismeri a problémát",
+      they: Q1 + "Igen, sajnos ez nálunk is gond." + Q2,
+      you: "→ Folytasd a Hitelesség résszel lentebb",
     },
     b: {
-      label: "HA NEM – nem ismeri el",
-      they: "„Nem, ez nálunk nem jellemző."",
-      you: "„Örülök, hogy így van. Ha szabad megkérdeznem: jelenleg honnan jön az érdeklődők nagy része – ajánlás, vagy aktívan hirdetnek is valamit?"",
+      label: "HA NEM " + DASH + " nem ismeri el",
+      they: Q1 + "Nem, ez nálunk nem jellemző." + Q2,
+      you: Q1 + "Örülök, hogy így van. Ha szabad megkérdeznem: jelenleg honnan jön az érdeklődők nagy része " + DASH + " ajánlás, vagy aktívan hirdetnek is valamit?" + Q2,
     },
   },
   {
     type: "sub-ab",
-    title: "HA NEM ISMERI EL – következő kérdés után",
+    title: "HA NEM ISMERI EL " + DASH + " következő kérdés után",
     a: {
       label: "HA AJÁNLÁSBÓL ÉL",
-      they: "„Főleg ajánlásból érkeznek."",
-      you: "„Ez nagyon jól hangzik. A kérdés csak az, hogy ha holnap az egyik fő ajánló forrás kiesik, van-e más csatorna? Mert ezt szokák a cégek akkor meglépni, amikor már szűk a munka – mi azt javasoljuk, hogy előtte legyen kész a rendszer. Pont erről szólna az a 20 perc. Inkább hét eleje vagy vége jobb?"",
+      they: Q1 + "Főleg ajánlásból érkeznek." + Q2,
+      you: Q1 + "Ez nagyon jól hangzik. A kérdés csak az, hogy ha holnap az egyik fő ajánló forrás kiesik, van-e más csatorna? Mert ezt szokák a cégek akkor meglépni, amikor már szűk a munka " + DASH + " mi azt javasoljuk, hogy előtte legyen kész a rendszer. Pont erről szólna az a 20 perc. Inkább hét eleje vagy vége jobb?" + Q2,
     },
     b: {
       label: "HA HIRDETNEK MÁR",
-      they: "„Igen, hirdetünk is valamit."",
-      you: "„Melyik platformon fut jelenleg?" → Ha Facebook: „És az onnan jövő érdeklődők minősége hogyan alakul?" → Ha Google/egyéb: „Mi kifejezetten Facebookon dolgozunk, ahol az AI-alapú előszűrés sokkal pontosabban beállítható. Ez más megközelítés – pont ezt mutatnám meg. Mikor lenne jobb?"",
+      they: Q1 + "Igen, hirdetünk is valamit." + Q2,
+      you: Q1 + "Melyik platformon fut jelenleg?" + Q2 + " → Ha Facebook: " + Q1 + "És az onnan jövő érdeklődők minősége hogyan alakul?" + Q2 + " → Ha Google/egyéb: " + Q1 + "Mi kifejezetten Facebookon dolgozunk, ahol az AI-alapú előszűrés sokkal pontosabban beállítható. Ez más megközelítés " + DASH + " pont ezt mutatnám meg. Mikor lenne jobb?" + Q2,
     },
   },
-  { type: "phase", label: "HITELESSÉGI" },
-  { type: "you", text: "„Amit mi csinálunk: Meta-alapú lead kvalifikációs rendszert üzemeltetünk építőipari cégeknek. A hirdetés csak az eszköz – a valódi munka az előszűrésnél történik: AI-val mérjük minden érdeklődő szándékát, projekttípust, időkeretet és büdzsét még az előtt, hogy önökhöz kerülne. Csak az jut el önökhöz, aki valós igénnyel rendelkezik. Jellemzően [X] héten belül [Y db] ilyen, előszűrt érdeklődőt hozunk."" },
+  { type: "phase", label: "HITELESSÉG" },
+  { type: "you", text: Q1 + "Amit mi csinálunk: Meta-alapú lead kvalifikációs rendszert üzemeltezünk építőipari cégeknek. A hirdetés csak az eszköz " + DASH + " a valódi munka az előszűrésnél történik: AI-val mérjük minden érdeklődő szándékát, projekttípust, időkeretet és büdzsét még az előtt, hogy önökhöz kerülne. Csak az jut el önökhöz, aki valós igénnyel rendelkezik. Jellemzően [X] héten belül [Y db] ilyen, előszűrt érdeklődőt hozunk." + Q2 },
   { type: "phase", label: "ZÁRÁS" },
-  { type: "you", text: "„Nem szeretnék most részletekbe menni telefonon – ez nem egy 10 perces pitch. Amit javaslok: egy 20 perces, kötetlen egyéztetes, ahol megmutatom pontosan hogyan működik a rendszer, önök pedig elmondhatják mi a jelenlegi helyzetük. Ha nem illik össze, nincs semmi következménye. Inkább a hét eleje vagy a vége jobb önöknek?"" },
+  { type: "you", text: Q1 + "Nem szeretnék most részletekbe menni telefonon " + DASH + " ez nem egy 10 perces pitch. Amit javaslok: egy 20 perces, kötetlen egyéztetes, ahol megmutatom pontosan hogyan működik a rendszer, önök pedig elmondhaják mi a jelenlegi helyzetük. Ha nem illik össze, nincs semmi következménye. Inkább a hét eleje vagy a vége jobb önöknek?" + Q2 },
   { type: "phase", label: "KIFOGÁSKEZELÉS" },
   {
     type: "objection",
-    obj: "„Már próbáltuk a Facebook hirdetést, nem működött."",
-    resp: "„Ezt hallom a legtöbbször – és őszintén, az esetek nagy részében igaza van, mert általában nem szűrik az érdeklődőket előre. Mi éppen ebből a problémából indultunk ki. Megmutatom mi a különbség – ha 20 perc után azt mondja, nincs benne semmi új, szóljon. Mikor lenne jobb, kedd vagy csütörtök?"",
+    obj: Q1 + "Már próbáltuk a Facebook hirdetést, nem működött." + Q2,
+    resp: Q1 + "Ezt hallom a legtöbbször " + DASH + " és őszintén, az esetek nagy részében igaza van, mert általában nem szűrik az érdeklődőket előre. Mi éppen ebből a problémából indultunk ki. Megmutatom mi a különbség " + DASH + " ha 20 perc után azt mondja, nincs benne semmi új, szóljon. Mikor lenne jobb, kedd vagy csütörtök?" + Q2,
   },
   {
     type: "objection",
-    obj: "„Nincs rá időm most, sok munkánk van."",
-    resp: "„Ez pontosan a legjobb szituáció erre – mert ha lassabb a szezon, akkor már kapkodni kell. 20 percet tudunk csinálni akár kora reggel is, ahogy kényelmes. Mikor lenne jobb?"",
+    obj: Q1 + "Nincs rá időm most, sok munkánk van." + Q2,
+    resp: Q1 + "Ez pontosan a legjobb szituáció erre " + DASH + " mert ha lassabb a szezon, akkor már kapkodni kell. 20 percet tudunk csinálni akár kora reggel is, ahogy kényelmes. Mikor lenne jobb?" + Q2,
   },
   {
     type: "objection",
-    obj: "„Mennyibe kerül?"",
-    resp: "„Ezt szándékosan nem mondanám most telefonon – mert attól függ, mekkora területet fednek le és milyen kapacitással dolgoznak. Ezt a 20 perces egyéztetésen szoktuk tisztázni. Mikor lenne ez jobb, hét elején vagy végén?"",
+    obj: Q1 + "Mennyibe kerül?" + Q2,
+    resp: Q1 + "Ezt szándékosan nem mondanám most telefonon " + DASH + " mert attól függ, mekkora területet fednek le és milyen kapacitással dolgoznak. Ezt a 20 perces egyéztetesén szoktuk tisztázni. Mikor lenne ez jobb, hét elején vagy végén?" + Q2,
   },
   {
     type: "objection",
-    obj: "„Küldjön emailt / majd visszahívom."",
-    resp: "„Szoktam emailt küldeni, de tapasztalatból tudom, hogy az építőiparban ez általában elvész. Inkább tegyük be a naptárba most – ha mégsem stimmel, lemondja, semmi gond. Kedd délelőtt vagy csütörtök délután jobb?"",
+    obj: Q1 + "Küldjön emailt / majd visszahívom." + Q2,
+    resp: Q1 + "Szoktam emailt küldeni, de tapasztalatból tudom, hogy az építőiparban ez általában elvész. Inkább tegyük be a naptárba most " + DASH + " ha mégsem stimmel, lemondia, semmi gond. Kedd délelőtt vagy csütörtök délután jobb?" + Q2,
   },
   {
     type: "objection",
-    obj: "„Nem érdekel a közösségi média / a hirdetés."",
-    resp: "„Teljesen érthető. Amit mi csinálunk, az inkább egy lead-rendszer, mint klasszikus hirdetés. A platform csak az eszköz – a lényeg az, hogy ki jut el önökhöz és ki nem. Ez 20 perc alatt megítélhető. Hét eleje vagy vége jobb?"",
+    obj: Q1 + "Nem érdekel a közösségi média / a hirdetés." + Q2,
+    resp: Q1 + "Teljesen érthétő. Amit mi csinálunk, az inkább egy lead-rendszer, mint klasszikus hirdetés. A platform csak az eszköz " + DASH + " a lényeg az, hogy ki jut el önökhöz és ki nem. Ez 20 perc alatt megítélhető. Hét eleje vagy vége jobb?" + Q2,
   },
   {
     type: "objection",
-    obj: "„Van már marketingesünk / ügynökségünk."",
-    resp: "„Remek – akkor valószínűleg már látják, milyen érdeklődők jönnek. Azt mutatnám meg, hogyan egészíthető ki ez egy AI-alapú szűrővel, ami az érdeklődők minőségét javítja – függetlenül attól, ki futtatja a hirdetéseket. 20 perc – kedd vagy csütörtök jobb?"",
+    obj: Q1 + "Van már marketingesünk / ügynökségünk." + Q2,
+    resp: Q1 + "Remek " + DASH + " akkor valószínűleg már látják, milyen érdeklődők jönnek. Azt mutatnám meg, hogyan egészíthető ki ez egy AI-alapú szűrővel, ami az érdeklődők minőségét javítja " + DASH + " függetlenül attól, ki futtatja a hirdetéseket. 20 perc " + DASH + " kedd vagy csütörtök jobb?" + Q2,
   },
 ];
 
@@ -193,7 +198,7 @@ export default function App() {
   if (!loaded) return (
     <div style={{ background: "#0d0d0b", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <style>{css}</style>
-      <div style={{ color: "#e8612a", fontFamily: "Syne,sans-serif", fontSize: 13 }}>Betöltés…</div>
+      <div style={{ color: "#e8612a", fontFamily: "Syne,sans-serif", fontSize: 13 }}>{"Betöltés…"}</div>
     </div>
   );
 
@@ -201,19 +206,17 @@ export default function App() {
     <div style={{ background: "#0d0d0b", minHeight: "100vh", fontFamily: "'DM Sans',sans-serif", fontWeight: 300, color: "#f5f3ee" }}>
       <style>{css}</style>
 
-      {/* TOP */}
       <div style={{ borderBottom: "1px solid rgba(232,97,42,0.1)", padding: "14px 32px", position: "sticky", top: 0, background: "rgba(13,13,11,0.97)", backdropFilter: "blur(12px)", zIndex: 100, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <span style={{ fontFamily: "Syne,sans-serif", fontSize: 13, fontWeight: 800, color: "#e8612a", letterSpacing: "0.06em" }}>COLD CALL SCRIPT</span>
           <span style={{ fontSize: 12, color: "#2a2520" }}>|</span>
-          <span style={{ fontSize: 12, color: "#4a4540" }}>Építőipar · 20 perces egyeztetés</span>
+          <span style={{ fontSize: 12, color: "#4a4540" }}>{"Építőipar · 20 perces egyeztetés"}</span>
         </div>
         <button className={`edit-btn${editing ? " on" : ""}`} onClick={() => setEditing(e => !e)}>
           {editing ? "✓ Kész" : "✏ Szerkesztés"}
         </button>
       </div>
 
-      {/* LEGEND */}
       <div style={{ padding: "14px 32px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", gap: 24, flexWrap: "wrap" }}>
         {[
           { color: "#e8612a", label: "Te mondod" },
@@ -227,7 +230,6 @@ export default function App() {
         ))}
       </div>
 
-      {/* CONTENT */}
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "4px 28px 80px" }}>
         {blocks.map((block, i) => {
 
@@ -251,7 +253,7 @@ export default function App() {
 
           if (block.type === "wait") return (
             <div key={i} className="wait-row">
-              <div className="wait-pill">⏸ <EditText value={block.text} onChange={v => setF(i, "text", v)} editing={editing} /></div>
+              <div className="wait-pill">&#9208; <EditText value={block.text} onChange={v => setF(i, "text", v)} editing={editing} /></div>
             </div>
           );
 
@@ -262,7 +264,7 @@ export default function App() {
                   <div className={`b-tag b-tag-${side}`}>
                     <EditText value={block[side].label} onChange={v => setF(i, `${side}.label`, v)} editing={editing} />
                   </div>
-                  <div className="b-they-label">Ő mondja:</div>
+                  <div className="b-they-label">{"Ő mondja:"}</div>
                   <div className="b-they">
                     <EditText value={block[side].they} onChange={v => setF(i, `${side}.they`, v)} editing={editing} />
                   </div>
@@ -286,7 +288,7 @@ export default function App() {
                     <div className={`b-tag b-tag-${side}`}>
                       <EditText value={block[side].label} onChange={v => setF(i, `${side}.label`, v)} editing={editing} />
                     </div>
-                    <div className="b-they-label">Ő mondja:</div>
+                    <div className="b-they-label">{"Ő mondja:"}</div>
                     <div className="b-they">
                       <EditText value={block[side].they} onChange={v => setF(i, `${side}.they`, v)} editing={editing} />
                     </div>
@@ -303,17 +305,17 @@ export default function App() {
           if (block.type === "objection") return (
             <div key={i} className="obj">
               <div className="obj-head">
-                <div className="obj-they-label">❌ Ő mondja:</div>
+                <div className="obj-they-label">&#10060; {"Ő mondja:"}</div>
                 <div className="obj-they-text">
                   <EditText value={block.obj} onChange={v => setF(i, "obj", v)} editing={editing} />
                 </div>
               </div>
               <div className="obj-body">
-                <div className="obj-you-label">✓ Te mondod:</div>
+                <div className="obj-you-label">&#10003; Te mondod:</div>
                 <div className="obj-you-text">
                   <EditText value={block.resp} onChange={v => setF(i, "resp", v)} editing={editing} />
                 </div>
-                {editing && <button className="del-btn" onClick={() => { const c = [...blocks]; c.splice(i, 1); upd(c); }}>× töröl</button>}
+                {editing && <button className="del-btn" onClick={() => { const c = [...blocks]; c.splice(i, 1); upd(c); }}>&#215; {"töröl"}</button>}
               </div>
             </div>
           );
@@ -326,11 +328,11 @@ export default function App() {
             const c = [...blocks];
             c.push({ type: "objection", obj: "Új kifogás…", resp: "Válasz…" });
             upd(c);
-          }}>+ Új kifogás hozzáadása</button>
+          }}>+ {"Új kifogás hozzáadása"}</button>
         )}
       </div>
 
-      {saved && <div className="toast">✓ Mentve</div>}
+      {saved && <div className="toast">&#10003; Mentve</div>}
     </div>
   );
 }
